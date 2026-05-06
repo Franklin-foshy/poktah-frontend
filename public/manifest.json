@@ -1,0 +1,18 @@
+{
+  "name": "Poktah Panel",
+  "short_name": "Poktah",
+  "description": "Panel de ventas Poktah",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F7F8FC",
+  "theme_color": "#6C63FF",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
