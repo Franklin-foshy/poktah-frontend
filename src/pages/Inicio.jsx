@@ -78,38 +78,6 @@ function MetricCard({ label, value, icon, iconColor, iconBg, sub, onClick, t }) 
   )
 }
 
-// ─── QuickAction — compacto horizontal ───────────────────────────────────────
-
-function QuickAction({ label, icon, iconColor, iconBg, badge, onClick, t }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        flex: 1, minWidth: 0,
-        display: 'flex', alignItems: 'center', gap: 7,
-        padding: '8px 10px', borderRadius: 10, border: `1px solid ${t.border}`,
-        background: t.surface, cursor: 'pointer', transition: 'all 0.15s',
-        position: 'relative', fontFamily: 'inherit',
-      }}
-      onMouseEnter={e => { e.currentTarget.style.borderColor = t.accent; e.currentTarget.style.background = t.accentBg }}
-      onMouseLeave={e => { e.currentTarget.style.borderColor = t.border; e.currentTarget.style.background = t.surface }}
-    >
-      {badge > 0 && (
-        <span style={{
-          position: 'absolute', top: 4, right: 4,
-          minWidth: 15, height: 15, borderRadius: 8, padding: '0 3px',
-          background: t.red, color: '#fff', fontSize: 9, fontWeight: 700,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>{badge > 99 ? '99+' : badge}</span>
-      )}
-      <div style={{ width: 26, height: 26, borderRadius: 7, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-        <Ico d={ICONS[icon]} size={13} color={iconColor} />
-      </div>
-      <span style={{ fontSize: 11, fontWeight: 600, color: t.textSec, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{label}</span>
-    </button>
-  )
-}
-
 // ─── PedidoRow ────────────────────────────────────────────────────────────────
 
 function PedidoRow({ p, t, onClick }) {
@@ -335,20 +303,6 @@ export default function Inicio() {
       </div>
 
       <div style={{ padding: pad }}>
-
-        {/* ── ACCIONES RÁPIDAS (antes de los KPIs) ─────────────────────── */}
-        <div style={{ marginBottom: gap }}>
-          <div style={{ fontSize: 10, fontWeight: 700, color: t.textMuted, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
-            Acciones rápidas
-          </div>
-          <div style={{ display: 'flex', gap: isMobile ? 6 : 8 }}>
-            <QuickAction label="Pedidos"   icon="pedidos"   iconColor={t.blue}   iconBg={t.blueBg}   badge={pedidosCnt} onClick={() => navigate('/dashboard/pedidos')}  t={t} />
-            <QuickAction label="Pagos"     icon="pagos"     iconColor={t.yellow} iconBg={t.yellowBg} badge={pagosPend}  onClick={() => navigate('/dashboard/pagos')}    t={t} />
-            <QuickAction label="Productos" icon="productos" iconColor={t.green}  iconBg={t.greenBg}                    onClick={() => navigate('/dashboard/productos')} t={t} />
-            <QuickAction label="Clientes"  icon="clientes"  iconColor={t.purple} iconBg={t.purpleBg}                   onClick={() => navigate('/dashboard/clientes')}  t={t} />
-            <QuickAction label="Agente IA" icon="agente"    iconColor="#D4A843"  iconBg="#FFFBEB"                      onClick={() => navigate('/dashboard/agente')}    t={t} />
-          </div>
-        </div>
 
         {/* ── BANNER CATÁLOGO — siempre visible ─────────────────────────── */}
         {stats && (stats.plan_catalogo ? (() => {

@@ -79,7 +79,7 @@ function ImgProducto({ src, alt }) {
   return <img src={src} alt={alt} onError={() => setErr(true)} style={{ width:'100%', height:'100%', objectFit:'cover', transition:'transform 0.35s ease' }} />
 }
 
-function ProductoCard({ producto, onAgregar, accent, isDesktop }) {
+function ProductoCard({ producto, onAgregar, onVerDetalle, accent, isDesktop }) {
   const [varSel, setVarSel] = useState(
     producto.variantes?.find(v => v.is_default) || producto.variantes?.[0] || null
   )
@@ -125,8 +125,8 @@ function ProductoCard({ producto, onAgregar, accent, isDesktop }) {
     >
       {/* Imagen */}
       <div
-        style={{ position:'relative', paddingTop: imgHeight, overflow:'hidden', cursor: imgs.length > 1 ? 'pointer':'default', background:'#F9FAFB' }}
-        onClick={() => imgs.length > 1 && setImgIdx(i => (i+1) % imgs.length)}
+        style={{ position:'relative', paddingTop: imgHeight, overflow:'hidden', cursor:'pointer', background:'#F9FAFB' }}
+        onClick={() => onVerDetalle ? onVerDetalle(producto) : (imgs.length > 1 && setImgIdx(i => (i+1) % imgs.length))}
       >
         <div style={{ position:'absolute', inset:0, overflow:'hidden' }}>
           <div style={{ width:'100%', height:'100%', transform: hover ? 'scale(1.05)' : 'scale(1)', transition:'transform 0.35s ease' }}>
@@ -306,6 +306,151 @@ function ModalCarrito({ carrito, negocio, whatsapp, accent, onCerrar, onCambiar,
   )
 }
 
+function ModalProducto({ producto, accent, onCerrar, onAgregar }) {
+  const [varSel, setVarSel] = useState(
+    producto.variantes?.find(v => v.is_default) || producto.variantes?.[0] || null
+  )
+  const [imgIdx, setImgIdx] = useState(0)
+  const [flash, setFlash]   = useState(false)
+
+  const precio  = varSel ? varSel.precio : producto.precio
+  const stock   = varSel ? varSel.stock  : producto.stock
+  const imgs    = producto.imagenes?.filter(Boolean).length ? producto.imagenes.filter(Boolean) : [producto.imagen].filter(Boolean)
+  const sinStock = stock !== null && stock !== undefined && stock <= 0
+  const vals1   = [...new Set(producto.variantes?.map(v => v.valor1).filter(Boolean))]
+  const vals2   = [...new Set(producto.variantes?.map(v => v.valor2).filter(Boolean))]
+  const btnBg   = flash ? '#15803D' : sinStock ? '#E5E7EB' : accent
+  const btnColor = sinStock ? '#9CA3AF' : '#fff'
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
+  const handleAgregar = () => {
+    if (sinStock) return
+    onAgregar({ id: producto.id, nombre: producto.nombre, precio, variante: varSel, imagen: imgs[0] || null })
+    setFlash(true)
+    setTimeout(() => { setFlash(false); onCerrar() }, 900)
+  }
+
+  return (
+    <div style={{ position:'fixed', inset:0, zIndex:1001, display:'flex', alignItems:'flex-end', justifyContent:'center' }}>
+      <div onClick={onCerrar} style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.6)', backdropFilter:'blur(4px)' }} />
+      <div style={{
+        position:'relative', background:'#fff', borderRadius:'24px 24px 0 0',
+        width:'100%', maxWidth:560, maxHeight:'92vh',
+        display:'flex', flexDirection:'column',
+        boxShadow:'0 -20px 60px rgba(0,0,0,0.25)',
+      }}>
+        {/* Handle */}
+        <div style={{ width:40, height:4, borderRadius:2, background:'#E5E7EB', margin:'12px auto 0', flexShrink:0 }} />
+        {/* Close */}
+        <button onClick={onCerrar} style={{
+          position:'absolute', top:14, right:16,
+          background:'rgba(0,0,0,0.07)', border:'none', borderRadius:50,
+          width:34, height:34, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer',
+        }}>
+          <Ico d={ICONS.x} size={16} color="#374151" />
+        </button>
+
+        {/* Imagen */}
+        <div style={{ position:'relative', width:'100%', overflow:'hidden', flexShrink:0, background:'#F3F4F6',
+          borderRadius:'20px 20px 0 0', cursor: imgs.length > 1 ? 'pointer' : 'default' }}
+          onClick={() => imgs.length > 1 && setImgIdx(i => (i + 1) % imgs.length)}
+        >
+          <div style={{ paddingTop:'65%', position:'relative' }}>
+            <div style={{ position:'absolute', inset:0 }}>
+              <ImgProducto src={imgs[imgIdx]} alt={producto.nombre} />
+            </div>
+          </div>
+          {sinStock && (
+            <div style={{ position:'absolute', top:12, left:12, background:'rgba(0,0,0,0.68)', color:'#fff', fontSize:11, fontWeight:700, padding:'5px 12px', borderRadius:20 }}>
+              AGOTADO
+            </div>
+          )}
+          {imgs.length > 1 && (
+            <div style={{ position:'absolute', bottom:10, left:'50%', transform:'translateX(-50%)', display:'flex', gap:6 }}>
+              {imgs.map((_, i) => (
+                <div key={i} onClick={e => { e.stopPropagation(); setImgIdx(i) }}
+                  style={{ width:8, height:8, borderRadius:'50%', background: i === imgIdx ? accent : 'rgba(0,0,0,0.22)', cursor:'pointer', transition:'background 0.2s' }} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Cuerpo scrollable */}
+        <div style={{ flex:1, overflowY:'auto', padding:'18px 20px 4px' }}>
+          <div style={{ fontSize:21, fontWeight:800, color:'#111827', letterSpacing:'-0.5px', lineHeight:1.25, marginBottom: producto.descripcion ? 8 : 4 }}>
+            {producto.nombre}
+          </div>
+          {producto.descripcion && (
+            <div style={{ fontSize:14, color:'#6B7280', lineHeight:1.65, marginBottom:16 }}>
+              {producto.descripcion}
+            </div>
+          )}
+
+          {/* Variantes */}
+          {vals1.length > 0 && (
+            <div style={{ marginBottom:14 }}>
+              <div style={{ fontSize:11, fontWeight:700, color:'#9CA3AF', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:7 }}>
+                {producto.variante_label1 || 'Opción'}
+              </div>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:7 }}>
+                {vals1.map(v => {
+                  const sel = varSel?.valor1 === v
+                  return (
+                    <button key={v}
+                      onClick={() => { const m = producto.variantes.find(vr => vr.valor1===v && (!varSel?.valor2 || vr.valor2===varSel.valor2)); setVarSel(m || producto.variantes.find(vr => vr.valor1===v)) }}
+                      style={{ padding:'8px 16px', borderRadius:10, fontSize:13, fontWeight:600, border:`1.5px solid ${sel ? accent : '#E5E7EB'}`, background: sel ? `rgba(${hexToRgb(accent)},0.09)` : '#fff', color: sel ? accent : '#4B5563', cursor:'pointer', transition:'all 0.15s', fontFamily:'inherit' }}>
+                      {v}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+          {vals2.length > 0 && (
+            <div style={{ marginBottom:14 }}>
+              <div style={{ fontSize:11, fontWeight:700, color:'#9CA3AF', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:7 }}>
+                {producto.variante_label2 || 'Color'}
+              </div>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:7 }}>
+                {vals2.map(v => {
+                  const sel = varSel?.valor2 === v
+                  return (
+                    <button key={v}
+                      onClick={() => { const m = producto.variantes.find(vr => vr.valor2===v && (!varSel?.valor1 || vr.valor1===varSel.valor1)); setVarSel(m || producto.variantes.find(vr => vr.valor2===v)) }}
+                      style={{ padding:'8px 16px', borderRadius:10, fontSize:13, fontWeight:600, border:`1.5px solid ${sel ? accent : '#E5E7EB'}`, background: sel ? `rgba(${hexToRgb(accent)},0.09)` : '#fff', color: sel ? accent : '#4B5563', cursor:'pointer', transition:'all 0.15s', fontFamily:'inherit' }}>
+                      {v}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Pie fijo — precio + botón */}
+        <div style={{ padding:'14px 20px 30px', borderTop:'1px solid #F3F4F6', flexShrink:0 }}>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
+            <div style={{ fontSize:30, fontWeight:900, color:'#111827', letterSpacing:'-1px', lineHeight:1 }}>
+              Q{precio?.toFixed(2)}
+            </div>
+            {stock !== null && stock !== undefined && stock > 0 && (
+              <div style={{ fontSize:12, color:'#9CA3AF', fontWeight:500 }}>{stock} disponibles</div>
+            )}
+          </div>
+          <button onClick={handleAgregar} disabled={sinStock}
+            style={{ width:'100%', padding:'16px 20px', borderRadius:14, border:'none', background:btnBg, color:btnColor, fontSize:16, fontWeight:700, cursor:sinStock?'not-allowed':'pointer', transition:'all 0.2s', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:8, transform: flash ? 'scale(0.97)' : 'scale(1)', boxShadow: sinStock ? 'none' : `0 4px 18px rgba(${hexToRgb(accent)},0.35)` }}>
+            {flash ? '✓ Agregado al pedido' : sinStock ? 'Agotado' : <><Ico d={ICONS.plus} size={18} color="#fff" /> Agregar al pedido</>}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function TiendaPublica() {
   const { slug }                     = useParams()
   const [tienda,    setTienda]       = useState(null)
@@ -313,6 +458,7 @@ export default function TiendaPublica() {
   const [error404,  setError404]     = useState(false)
   const [carrito,   setCarrito]      = useState([])
   const [verCarrito,setVerCarrito]   = useState(false)
+  const [modalProducto,setModalProducto] = useState(null)
   const [busqueda,  setBusqueda]     = useState('')
   const [tipoFiltro,setTipoFiltro]  = useState('todos')
 
@@ -532,7 +678,7 @@ export default function TiendaPublica() {
             </div>
             <div style={{ display:'grid', gridTemplateColumns: gridCols, gap: isDesktop ? 22 : 10 }}>
               {filtrados.map(p => (
-                <ProductoCard key={p.id} producto={p} onAgregar={agregar} accent={accent} isDesktop={isDesktop} />
+                <ProductoCard key={p.id} producto={p} onAgregar={agregar} onVerDetalle={setModalProducto} accent={accent} isDesktop={isDesktop} />
               ))}
             </div>
           </>
@@ -566,6 +712,16 @@ export default function TiendaPublica() {
             </button>
           </div>
         </div>
+      )}
+
+      {/* ── MODAL PRODUCTO ────────────────────────────────────────────────── */}
+      {modalProducto && (
+        <ModalProducto
+          producto={modalProducto}
+          accent={accent}
+          onCerrar={() => setModalProducto(null)}
+          onAgregar={(item) => { agregar(item); setModalProducto(null) }}
+        />
       )}
 
       {/* ── MODAL CARRITO ─────────────────────────────────────────────────── */}

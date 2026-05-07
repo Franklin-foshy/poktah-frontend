@@ -568,8 +568,8 @@ export default function Productos() {
                       <div
                         onClick={() => fileRef.current[p.id]?.click()}
                         style={{
-                          width: isMobile ? 60 : 72, height: isMobile ? 60 : 72,
-                          borderRadius: 12, overflow: 'hidden', flexShrink: 0,
+                          width: isMobile ? 84 : 100, height: isMobile ? 84 : 100,
+                          borderRadius: 14, overflow: 'hidden', flexShrink: 0,
                           background: t.bg, border: `1px solid ${t.border}`,
                           cursor: 'pointer', position: 'relative',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
