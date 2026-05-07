@@ -270,7 +270,9 @@ function DesktopLayout({ children }) {
 
       {/* ── MAIN ──────────────────────────────────────────────────────── */}
       <main style={{ flex: 1, overflow: 'auto', minWidth: 0, background: t.bg }}>
-        {children}
+        <div key={location.pathname} className="page-enter">
+          {children}
+        </div>
       </main>
     </div>
   )
@@ -307,7 +309,9 @@ function MobileLayout({ children }) {
       fontFamily: '-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif',
     }}>
       <div style={{ paddingBottom: 72, minHeight: '100dvh' }}>
-        {children}
+        <div key={location.pathname} className="page-enter">
+          {children}
+        </div>
       </div>
 
       {/* ── BOTTOM TAB ─────────────────────────────────────────────── */}
@@ -325,6 +329,7 @@ function MobileLayout({ children }) {
             <button
               key={item.path}
               onClick={() => goTo(item.path)}
+              className="btn-tap"
               style={{
                 flex: 1, display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center',
@@ -356,6 +361,7 @@ function MobileLayout({ children }) {
         {/* Más */}
         <button
           onClick={() => setMasOpen(v => !v)}
+          className="btn-tap"
           style={{
             flex: 1, display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
@@ -426,6 +432,7 @@ function MobileLayout({ children }) {
               <button
                 key={item.path}
                 onClick={() => goTo(item.path)}
+                className="btn-tap"
                 style={{
                   width: '100%', display: 'flex', alignItems: 'center',
                   gap: 14, padding: '12px 20px', border: 'none',

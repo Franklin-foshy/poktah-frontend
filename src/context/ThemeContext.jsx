@@ -38,10 +38,10 @@ export const THEMES = {
     purpleBg:     '#F5F3FF',
 
     // ── Sombras
-    shadow:       '0 1px 3px rgba(0,0,0,0.05)',
-    shadowMd:     '0 4px 18px rgba(0,0,0,0.06)',
-    shadowLg:     '0 12px 40px rgba(0,0,0,0.09)',
-    shadowAccent: '0 4px 14px rgba(34,197,94,0.22)',
+    shadow:       '0 2px 10px rgba(0,0,0,0.07)',
+    shadowMd:     '0 6px 24px rgba(0,0,0,0.09)',
+    shadowLg:     '0 18px 48px rgba(0,0,0,0.12)',
+    shadowAccent: '0 4px 16px rgba(34,197,94,0.28)',
 
     // ── Sidebar (claro en modo claro)
     sidebarBg:            '#FFFFFF',
@@ -96,10 +96,10 @@ export const THEMES = {
     purpleBg:     '#110D22',
 
     // ── Sombras
-    shadow:       '0 1px 4px rgba(0,0,0,0.40)',
-    shadowMd:     '0 4px 18px rgba(0,0,0,0.55)',
-    shadowLg:     '0 12px 40px rgba(0,0,0,0.65)',
-    shadowAccent: '0 4px 14px rgba(52,211,153,0.18)',
+    shadow:       '0 2px 10px rgba(0,0,0,0.50)',
+    shadowMd:     '0 6px 24px rgba(0,0,0,0.65)',
+    shadowLg:     '0 18px 48px rgba(0,0,0,0.75)',
+    shadowAccent: '0 4px 16px rgba(52,211,153,0.22)',
 
     // ── Sidebar — azul marino más oscuro
     sidebarBg:            '#050B16',

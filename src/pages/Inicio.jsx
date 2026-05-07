@@ -165,12 +165,20 @@ export default function Inicio() {
   }
 
   if (loading) {
+    const _pad = isMobile ? 12 : 20
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '80vh', flexDirection: 'column', gap: 12 }}>
-        <div style={{ width: 36, height: 36, borderRadius: 10, background: t.accentBg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Ico d={ICONS.refresh} size={20} color={t.accent} />
+      <div style={{ padding: _pad, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="skeleton" style={{ height: 116, borderRadius: 14, background: t.border }} />
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: 10 }}>
+          {[1,2,3,4].map(i => (
+            <div key={i} className="skeleton" style={{ height: 96, borderRadius: 14, background: t.border }} />
+          ))}
         </div>
-        <span style={{ fontSize: 13, color: t.textMuted }}>Cargando...</span>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 10 }}>
+          {[1,2].map(i => (
+            <div key={i} className="skeleton" style={{ height: 200, borderRadius: 14, background: t.border }} />
+          ))}
+        </div>
       </div>
     )
   }

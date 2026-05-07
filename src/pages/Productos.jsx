@@ -505,7 +505,11 @@ export default function Productos() {
       <div style={{ padding: isMobile ? 12 : 20 }}>
 
         {loading && (
-          <div style={{ textAlign: 'center', color: t.textMuted, fontSize: 13, padding: 48 }}>Cargando...</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? 10 : 12 }}>
+            {[1,2,3,4].map(i => (
+              <div key={i} className="skeleton" style={{ height: 104, borderRadius: 14, background: t.border }} />
+            ))}
+          </div>
         )}
 
         {!loading && productosFiltrados.length === 0 && (
